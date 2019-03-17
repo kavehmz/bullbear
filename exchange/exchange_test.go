@@ -7,7 +7,7 @@ import (
 
 type source struct{ err bool }
 
-func (s *source) Pull(symbol string) (*Tick, error) {
+func (s *source) Pull(symbol SymbolCode) (*Tick, error) {
 	if s.err {
 		return nil, errors.New("test_source_error")
 	}
@@ -16,7 +16,7 @@ func (s *source) Pull(symbol string) (*Tick, error) {
 
 type store struct {
 	err  bool
-	data map[string]int64
+	data map[SymbolCode]int64
 }
 
 func (s *store) Insert(tick *Tick) error {
@@ -29,8 +29,8 @@ func (s *store) Insert(tick *Tick) error {
 
 func TestExchange_Pull(t *testing.T) {
 	so := &source{}
-	st := &store{data: make(map[string]int64)}
-	sym := "BTCUSD"
+	st := &store{data: make(map[SymbolCode]int64)}
+	sym := SymbolCode{Base: "BTC", Target: "USD"}
 
 	e := Exchange{Source: so, Store: st}
 
