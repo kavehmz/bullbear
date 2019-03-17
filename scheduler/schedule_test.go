@@ -25,7 +25,7 @@ func Test_schedule(t *testing.T) {
 	errors := make(chan error)
 	ran := make(chan bool)
 	j := (&Job{}).Define(&exchangeMock{exit: 1}, exchange.SymbolCode{}, time.Nanosecond).Errors(errors).Ran(ran)
-	s := (&Scheduler{}).Add(j).Run()
+	(&Scheduler{}).Add(j).Run()
 
 	select {
 	case e := <-errors:
@@ -37,9 +37,7 @@ func Test_schedule(t *testing.T) {
 	}
 
 	j = (&Job{}).Define(&exchangeMock{}, exchange.SymbolCode{}, time.Nanosecond).Errors(errors).Ran(ran)
-	s = &Scheduler{}
-	s.Add(j)
-	s.Run()
+	(&Scheduler{}).Add(j).Run()
 
 	select {
 	case <-ran:
@@ -48,9 +46,7 @@ func Test_schedule(t *testing.T) {
 	}
 
 	j = (&Job{}).Define(&exchangeMock{}, exchange.SymbolCode{}, time.Minute).Errors(errors).Ran(ran)
-	s = &Scheduler{}
-	s.Add(j)
-	s.Run()
+	(&Scheduler{}).Add(j).Run()
 
 	go func() { j.Cancel() }()
 
