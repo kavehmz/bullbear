@@ -1,3 +1,5 @@
+// Package exchange handles the operation related to pulling and inserting data.
+// It can use different sources and storages as long as they implement the correct interface.
 package exchange
 
 // Exchange represents any source exchange to retrieve data from.
