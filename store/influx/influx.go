@@ -25,8 +25,9 @@ func (s *Influx) Insert(tick *exchange.Tick) error {
 		Fields: map[string]interface{}{
 			"value": tick.Value,
 		},
-		Time:      tick.Timestamp,
-		Precision: "ms",
+		Time: tick.Timestamp,
+
+		Precision: "ns",
 	}
 	bps := client.BatchPoints{
 		Points:   []client.Point{point},
