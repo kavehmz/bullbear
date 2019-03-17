@@ -5,7 +5,7 @@ package exchange
 // Exchange represents any source exchange to retrieve data from.
 type Exchange struct {
 	Source interface {
-		Pull(symbol string) (*Tick, error)
+		Pull(symbol SymbolCode) (*Tick, error)
 	}
 	Store interface {
 		Insert(tick *Tick) error
@@ -13,7 +13,7 @@ type Exchange struct {
 }
 
 // Pull get market data for a symbol and saves it in the db.
-func (s *Exchange) Pull(symbol string) error {
+func (s *Exchange) Pull(symbol SymbolCode) error {
 	tick, err := s.Source.Pull(symbol)
 	if err != nil {
 		return err
