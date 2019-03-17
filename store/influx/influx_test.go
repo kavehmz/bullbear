@@ -10,8 +10,7 @@ import (
 )
 
 type influxMock struct {
-	err bool
-	bp  client.BatchPoints
+	bp client.BatchPoints
 }
 
 func (s *influxMock) Write(bp client.BatchPoints) (*client.Response, error) {
