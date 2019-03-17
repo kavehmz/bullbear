@@ -3,6 +3,9 @@
 default:
 	@echo "Usage: make [command]"
 
+build:
+	docker build -t bullbear .
+
 influxdb:
 	mkdir -p $$PWD/data/influxdb
 	docker run -d --rm --name=influxdb -p 8086:8086 \
@@ -18,7 +21,17 @@ chronograf:
 		-v $$PWD/data/chronograf:/var/lib/chronograf \
 		chronograf --influxdb-url=http://influxdb:8086
 
-up: influxdb chronograf
+# shared network between the app, influxdb and chronograf
+network:
+	echo "creating a network for the app"
+	(docker network ls|grep -q influxdb) || docker network create influxdb
+
+run: build
+	docker run --rm --name=bullbear-gather \
+		--net=influxdb \
+		bullbear --influxdb="http://influxdb:8086"
+
+up: network influxdb chronograf run
 
 down:
 	docker stop chronograf influxdb || true
@@ -33,7 +46,6 @@ example-select:
 	docker exec -ti influxdb influx --database market -precision rfc3339  -execute 'select * from tick' -format 'column'  -pretty
 
 test:
-
 	docker run --rm -u`id -u`:`id -g` -v $$PWD:/go/src/github.com/kavehmz/bullbear golang:1 /bin/bash -c \
 	cd /go/src/github.com/kavehmz/bullbear;\
 	go test -v --race -cover -coverprofile=cover.out ./...; \
