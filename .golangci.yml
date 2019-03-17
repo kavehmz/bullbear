@@ -1,0 +1,15 @@
+linters-settings:
+  # lll:
+  #   line-length: 120
+  # gocyclo:
+  #   min-complexity: 10
+linters:
+  enable:
+    - gosec
+    - golint
+    - misspell
+    - gocyclo
+  exclude-use-default: false
+  max-per-linter: 0
+  max-same-issues: 0
+
