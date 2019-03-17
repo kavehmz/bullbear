@@ -23,8 +23,7 @@ func (s *exchangeMock) Pull(sym exchange.SymbolCode) error {
 }
 func Test_schedule(t *testing.T) {
 	errors := make(chan error)
-	ran := make(chan bool)
-	j := (&Job{}).Define(&exchangeMock{exit: 1}, exchange.SymbolCode{}, time.Nanosecond).Errors(errors).Ran(ran)
+	j := (&Job{}).Define(&exchangeMock{exit: 1}, exchange.SymbolCode{}, time.Nanosecond).Errors(errors)
 	(&Scheduler{}).Add(j).Run()
 
 	select {
@@ -36,7 +35,8 @@ func Test_schedule(t *testing.T) {
 		t.Error("expecting error but timed out")
 	}
 
-	j = (&Job{}).Define(&exchangeMock{}, exchange.SymbolCode{}, time.Nanosecond).Errors(errors).Ran(ran)
+	ran := make(chan bool)
+	j = (&Job{}).Define(&exchangeMock{}, exchange.SymbolCode{}, time.Nanosecond).Ran(ran)
 	(&Scheduler{}).Add(j).Run()
 
 	select {
@@ -45,10 +45,10 @@ func Test_schedule(t *testing.T) {
 		t.Error("expecting ran but timed out")
 	}
 
-	j = (&Job{}).Define(&exchangeMock{}, exchange.SymbolCode{}, time.Minute).Errors(errors).Ran(ran)
+	ran = make(chan bool)
+	j = (&Job{}).Define(&exchangeMock{}, exchange.SymbolCode{}, time.Minute).Ran(ran)
+	j.Cancel()
 	(&Scheduler{}).Add(j).Run()
-
-	go func() { j.Cancel() }()
 
 	select {
 	case <-ran:
