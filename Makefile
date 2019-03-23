@@ -12,14 +12,23 @@ influxdb:
 		--net=influxdb \
 		-v $$PWD/data/influxdb:/var/lib/influxdb \
 		-e INFLUXDB_DB=market \
-		influxdb -config /etc/influxdb/influxdb.conf
+		influxdb:1.7 -config /etc/influxdb/influxdb.conf
 
 chronograf:
 	mkdir -p $$PWD/data/chronograf
 	docker run -d --rm -u`id -u`:`id -g` --name=chronograf -p 8888:8888 \
 		--net=influxdb \
 		-v $$PWD/data/chronograf:/var/lib/chronograf \
-		chronograf --influxdb-url=http://influxdb:8086
+		chronograf:1.7 --influxdb-url=http://influxdb:8086 --kapacitor-url=http://localhost:9092
+
+kapacitor:
+	sleep 5
+	mkdir -p $$PWD/data/kapacitor
+	docker run -d --rm -u`id -u`:`id -g` --name=kapacitor \
+		--net=container:chronograf \
+		-v $$PWD/data/kapacitor:/var/lib/kapacitor \
+		-e  KAPACITOR_INFLUXDB_0_URLS_0=http://influxdb:8086 \
+		kapacitor:1.5
 
 # shared network between the app, influxdb and chronograf
 network:
@@ -31,10 +40,10 @@ run: build
 		--net=influxdb \
 		bullbear --influxdb="http://influxdb:8086"
 
-up: network influxdb chronograf run
+up: network influxdb chronograf kapacitor run
 
 down:
-	docker stop chronograf influxdb || true
+	docker stop chronograf influxdb kapacitor || true
 
 influx:
 	docker exec -ti influxdb influx --database market -precision rfc3339
