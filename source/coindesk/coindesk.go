@@ -27,7 +27,7 @@ type CoinDesk struct {
 
 // Pull retrieves a tick
 // https://api.coindesk.com/v1/bpi/currentprice.json
-func (s *CoinDesk) Pull(symbol exchange.SymbolCode) (*exchange.Tick, error) {
+func (s *CoinDesk) Pull(symbol exchange.SymbolCode) ([]*exchange.Tick, error) {
 	if symbol.Base != "BTC" || symbol.Target != "USD" {
 		return nil, ErrUnsupportedSymbol
 	}
@@ -37,9 +37,9 @@ func (s *CoinDesk) Pull(symbol exchange.SymbolCode) (*exchange.Tick, error) {
 		return nil, err
 	}
 
-	return &exchange.Tick{
+	return []*exchange.Tick{&exchange.Tick{
 		Symbol:    symbol,
 		Value:     int64(resp.Bpi.USD.Ratefloat * 1000000000),
 		Timestamp: resp.Time.UpdatedISO,
-	}, nil
+	}}, nil
 }

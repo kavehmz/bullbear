@@ -21,7 +21,7 @@ func (s *influxMock) Write(bp client.BatchPoints) (*client.Response, error) {
 func TestInflux_Insert(t *testing.T) {
 	imock := influxMock{}
 	i := Influx{Client: &imock}
-	err := i.Insert(&exchange.Tick{Value: 1000000000, Timestamp: time.Now(), Symbol: exchange.SymbolCode{Base: "BTC", Target: "USD"}})
+	err := i.Insert([]*exchange.Tick{&exchange.Tick{Value: 1000000000, Timestamp: time.Now(), Symbol: exchange.SymbolCode{Base: "BTC", Target: "USD"}}})
 	if err != nil || imock.bp.Points == nil {
 		t.Error("expected to save data")
 	}
