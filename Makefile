@@ -55,8 +55,8 @@ example-select:
 
 test:
 	docker run --rm -u`id -u`:`id -g` -v $$PWD:/go/src/github.com/kavehmz/bullbear golang:1 /bin/bash -c \
-	cd /go/src/github.com/kavehmz/bullbear;\
-	go test -v --race -cover -coverprofile=cover.out ./...; \
+	cd /go/src/github.com/kavehmz/bullbear && \
+	go test -v --race -cover -coverprofile=cover.out ./... && \
 	go tool cover -func=cover.out | \
 		awk 'END {sub("[.].*","",$$NF); printf "Coverage: %d%%\n", $$NF; \
 			if ($$NF+0 < 100) {print "Coverage is not sufficient"; exit 1}}'
