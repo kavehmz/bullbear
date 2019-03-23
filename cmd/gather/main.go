@@ -55,7 +55,7 @@ func main() {
 		Store:  flux,
 	}
 
-	job := (&scheduler.Job{}).Define(exch, exchange.SymbolCode{Base: "BTC", Target: "USD"}, time.Millisecond*time.Duration(*freq))
+	job := (&scheduler.Job{}).Define(exch, exchange.SymbolCode{Base: "BTC", Target: "USD"}, time.Millisecond*time.Duration(*freq)).Errors(logErrors("CoinDesk")).Ran(countTicks("CoinDesk"))
 
 	(&scheduler.Scheduler{}).Add(job).Run()
 
@@ -63,4 +63,26 @@ func main() {
 	signal.Notify(sigChan, syscall.SIGTERM, syscall.SIGINT, syscall.SIGQUIT, syscall.SIGABRT)
 	sig := <-sigChan
 	log.Printf("Received signal '%v', shutting down\n", sig)
+}
+
+func logErrors(title string) chan error {
+	ch := make(chan error)
+	go func() {
+		for e := range ch {
+			log.Printf("%s: %v", title, e)
+		}
+	}()
+	return ch
+}
+
+func countTicks(title string) chan bool {
+	ch := make(chan bool)
+	count := 0
+	go func() {
+		for _ = range ch {
+			count++
+			log.Printf("%s: received %d", title, count)
+		}
+	}()
+	return ch
 }
