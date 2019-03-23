@@ -22,7 +22,6 @@ chronograf:
 		chronograf:1.7 --influxdb-url=http://influxdb:8086 --kapacitor-url=http://localhost:9092
 
 kapacitor:
-	sleep 5
 	mkdir -p $$PWD/data/kapacitor
 	docker run -d --rm -u`id -u`:`id -g` --name=kapacitor \
 		--net=container:chronograf \
