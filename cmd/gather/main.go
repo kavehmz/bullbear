@@ -79,7 +79,7 @@ func countTicks(title string) chan bool {
 	ch := make(chan bool)
 	count := 0
 	go func() {
-		for _ = range ch {
+		for range ch {
 			count++
 			log.Printf("%s: received %d", title, count)
 		}
