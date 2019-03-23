@@ -8,7 +8,7 @@ build:
 
 influxdb:
 	mkdir -p $$PWD/data/influxdb
-	docker run -d --rm --name=influxdb -p 8086:8086 \
+	docker run -d --rm -u`id -u`:`id -g` --name=influxdb -p 8086:8086 \
 		--net=influxdb \
 		-v $$PWD/data/influxdb:/var/lib/influxdb \
 		-e INFLUXDB_DB=market \
@@ -16,7 +16,7 @@ influxdb:
 
 chronograf:
 	mkdir -p $$PWD/data/chronograf
-	docker run -d --rm --name=chronograf -p 8888:8888 \
+	docker run -d --rm -u`id -u`:`id -g` --name=chronograf -p 8888:8888 \
 		--net=influxdb \
 		-v $$PWD/data/chronograf:/var/lib/chronograf \
 		chronograf --influxdb-url=http://influxdb:8086
