@@ -7,11 +7,11 @@ import (
 
 type source struct{ err bool }
 
-func (s *source) Pull(symbol SymbolCode) (*Tick, error) {
+func (s *source) Pull(symbol SymbolCode) ([]*Tick, error) {
 	if s.err {
 		return nil, errors.New("test_source_error")
 	}
-	return &Tick{Symbol: symbol, Value: 4010500000000}, nil
+	return []*Tick{&Tick{Symbol: symbol, Value: 4010500000000}}, nil
 }
 
 type store struct {
@@ -19,11 +19,11 @@ type store struct {
 	data map[SymbolCode]int64
 }
 
-func (s *store) Insert(tick *Tick) error {
+func (s *store) Insert(ticks []*Tick) error {
 	if s.err {
 		return errors.New("test_store_error")
 	}
-	s.data[tick.Symbol] = tick.Value
+	s.data[ticks[0].Symbol] = ticks[0].Value
 	return nil
 }
 

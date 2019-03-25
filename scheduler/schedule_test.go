@@ -26,12 +26,13 @@ func Test_schedule(t *testing.T) {
 	j := (&Job{}).Define(&exchangeMock{exit: 1}, exchange.SymbolCode{}, time.Nanosecond).Errors(errors)
 	(&Scheduler{}).Add(j).Run()
 
+	testSleepTime := time.Millisecond * 100
 	select {
 	case e := <-errors:
 		if e.Error() != "test_error" {
 			t.Error("expecting error", e)
 		}
-	case <-time.After(time.Millisecond):
+	case <-time.After(testSleepTime):
 		t.Error("expecting error but timed out")
 	}
 
@@ -41,7 +42,7 @@ func Test_schedule(t *testing.T) {
 
 	select {
 	case <-ran:
-	case <-time.After(time.Millisecond):
+	case <-time.After(testSleepTime):
 		t.Error("expecting ran but timed out")
 	}
 
@@ -53,6 +54,6 @@ func Test_schedule(t *testing.T) {
 	select {
 	case <-ran:
 		t.Error("Did expected to get cancelled")
-	case <-time.After(time.Millisecond):
+	case <-time.After(testSleepTime):
 	}
 }

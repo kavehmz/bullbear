@@ -5,10 +5,10 @@ package exchange
 // Exchange represents any source exchange to retrieve data from.
 type Exchange struct {
 	Source interface {
-		Pull(symbol SymbolCode) (*Tick, error)
+		Pull(SymbolCode) ([]*Tick, error)
 	}
 	Store interface {
-		Insert(tick *Tick) error
+		Insert([]*Tick) error
 	}
 }
 

@@ -44,9 +44,9 @@ func TestCoinDesk_Pull(t *testing.T) {
 		t.Error("expected error", err)
 	}
 
-	tick, err := cd.Pull(exchange.SymbolCode{Base: "BTC", Target: "USD"})
-	if err != nil || tick.Value != 100100000000 || time.Since(tick.Timestamp) > time.Second {
-		t.Error("expected error", err, *tick)
+	ticks, err := cd.Pull(exchange.SymbolCode{Base: "BTC", Target: "USD"})
+	if err != nil || len(ticks) == 0 || ticks[0].Value != 100100000000 || time.Since(ticks[0].Timestamp) > time.Second {
+		t.Error("expected error", err, ticks)
 	}
 
 	c.err = true
